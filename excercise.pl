@@ -1,6 +1,6 @@
 %append(X, L, R) - конкатенацията на X и L е R
-append_my(X, [], [X]).
-append_my(X, [H|T], [H|R]):- append_my(X, T, R).
+append_my([], X, [X]).
+append_my([H|T], X, [H|R]):- append_my(T, X, R).
 
 
 % При подаден терм X и списък L
@@ -105,7 +105,7 @@ gen_nk([X|L1], N, K):- N > 0, between_my(X, 0, K), K1 is K - X, N1 is N - 1, gen
 % map(Func, L, M) генерира М списъкът,
 % който се получава чрез прилагането
 % на Func върху елементите на L.
-map(Func, [], []).
+map(_, [], []).
 map(Func, [H|T], [X|T1]):- map(Func,T,T1),
                           call(Func, H, X).
 
@@ -131,3 +131,29 @@ mappingNtoZ(N, Z):- Z is ((-1) ** N) * (N + 1) div 2.
 mapNtoZLists([],[]).
 mapNtoZLists([X|L], [Y|M]):- mapNtoZLists(L, M),
                              mappingNtoZ(X, Y).
+
+% method for generating all integers:
+int(Z):- nat(N), mappingNtoZ(N, Z).
+
+
+% length of a list
+len_my([], 0).
+len_my([_|T], N):- len_my(T, N1), N is N1+1.
+
+% Given a list L, nth_element(L, N, X) generates
+% in X and N every element of L and its index
+nth_element([X|_], 0, X).
+nth_element([_|T], N, X):- nth_element(T, N1, X), N is N1+1.
+
+
+% Given a list L, reverse(L, R) generates
+% in R a list made by reversing L
+
+% recursive implementation
+reverse_rec([], []).
+reverse_rec([H|T], R):- reverse_rec(T, T1), append_my(T1, H, R).
+
+% implementation with a stack
+reverse_stack(L, R):- reverse_helper(L, R, []).
+reverse_helper([], R, R).
+reverse_helper([X|L], R, M):- reverse_helper(L, R, [X|M]).
