@@ -5,6 +5,11 @@ append_my([H|T], X, [H|L]):- append_my(T, X, L).
 member_my(X, [X|_]).
 member_my(X, [_|T]):- member_my(X, T).
 
+between_my(A, A, B):- A =< B.
+between_my(X, A, B):- A < B,
+                      A1 is A + 1,
+                      between_my(X, A1, B).
+
 % given a list L, upon satisfaction
 % subset(L, S) generates in S all subsets of L
 subset([], []).
@@ -78,3 +83,56 @@ to_set_my(L, S):- subset(L, S), is_unique(S), not((member_my(X, L), not(member_m
 to_set1([], []).
 to_set1([X|L],[X|S]):- to_set1(L, S), not(member(X, S)).
 to_set1([X|L], S):- to_set1(L, S), member(X, S). 
+
+
+% Given Sigma kleene_star(Sigma, L)
+% upon satisfaction generates in L all
+% finite lists with elements from Sigma
+kleene_star(_, []).
+kleene_star(Sigma, [X|L]):- kleene_star(Sigma, L),
+                            member_my(X, Sigma).
+
+
+% Relaxed version of kleene_star which accepts
+% the length of the sequence
+kleene_star_relaxed(_, 0, []).
+kleene_star_relaxed(Sigma, N, [X|L]):- N > 0, N1 is N - 1,
+                                       kleene_star_relaxed(Sigma, N1, L),
+                                       member(X, Sigma).
+
+nat(0).
+nat(N):- nat(N1), N is N1+1.
+
+kleene_star2(Sigma, L):- nat(N), kleene_star_relaxed(Sigma, N, L).
+
+
+% Given natural numbers N and S
+% gen_tree_relaxed(T, N, S) upon satisfaction
+% generates in T all trees with N nodes,
+% which have natural numbers for labels,
+% which sum up to S
+gen_tree_relaxed([], 0, 0).
+gen_tree_relaxed([X, T1, T2], N, S):- N > 0, 
+                                      between_my(X, 0, S),
+                                      S1PlusS2 is S - X,
+                                      between_my(S1, 0, S1PlusS2),
+                                      S2 is S1PlusS2 - S1,
+                                      N1PlusN2 is N - 1,
+                                      between_my(N1, 0, N1PlusN2),
+                                      N2 is N1PlusN2 - N1,
+                                      gen_tree_relaxed(T1, N1, S1),
+                                      gen_tree_relaxed(T2, N2, S2).
+
+
+nat_pair(A, B):- nat(N),
+                 between(A, 0, N),
+                 B is N - A.
+
+
+gen_tree(T):- nat_pair(N, S), gen_tree_relaxed(T, N, S).
+
+
+% aperiodic(X) upon satisfaction generates
+% in X sequentially all elements from the aperiodic
+% sequence 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, ...
+aperiodic(X):- nat(N), X is N mod 2, between_my(_, 1, N).
