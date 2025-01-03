@@ -1,5 +1,5 @@
 %append(X, L, R) - конкатенацията на X и L е R
-append_my([], X, [X]).
+append_my([], X, X).
 append_my([H|T], X, [H|R]):- append_my(T, X, R).
 
 
