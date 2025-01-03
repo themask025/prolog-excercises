@@ -1,60 +1,46 @@
-%append(X, L, R) - конкатенацията на X и L е R
+%append(X, L, R) - the concatenation of X and L is R
 append_my([], X, X).
 append_my([H|T], X, [H|R]):- append_my(T, X, R).
 
 
-% При подаден терм X и списък L
-% insert(X, L, M) ще генерира в
-% M всички възможни масиви, които
-% се получават чрез вмъкване на X
-% в списъка L.
-
-% insert(X, L, M).
+% Given a term X and a list L
+% insert(X, L, M) will generate in M
+% all possible arrays which are results
+% of inserting X into L
 insert1(X, M, [X|M]).
 insert1(X, [M|L], [M|R]):- insert1(X, L, R). 
 
 insert2(X, L, R):- append_my(H1, H2, L), append_my(H1, [X|H2], R).
 
-% При подаден списък L perm(L, P)
-% генерира в P всички възможни
-% пермутации на списъка L.
 
-% perm(L, P).
+% Given a list L
+% perm(L, P) generates in P
+% all possible permutations of L
 perm([], []).
 perm([X|T], R):- perm(T, T1), insert1(X, T1, R).
 
 
-% sorted(L) проверява дали
-% подаденият списък L е
-% сортиран във възходящ ред.
-
+% sorted(L) checks if the given
+% list L is sorted in increasing order
 sorted([]).
 sorted([_]).
 sorted([X,Y|T]):- X =< Y, sorted([Y|T]).
 
-% Алтернативна имплементация, която
-% използва append:
-% "Няма два съседни елемента, които
-%  образуват инверсия."
 
+% An alternative implementation using append:
 sorted2(L):- not((append(_, [X, Y|_], L), X > Y)).
 
 
-% При подаден списък L bogosort(L, M)
-% ще генерира в M всички пермутации
-% на списъка L, които са сортирани.
-
+% Given a list L bogosort(L, M)
+% will generate in M all sorted 
+% permutations of L
 bogosort(L, R):- perm(L, R), sorted(R).
-
 
 
 sum_my(N, 0, N).
 sum_my(N, s(M), s(K)):- sum_my(N, M, K).
-% sum_my(N, M, K):- M1 is M-1, K1 is K-1, sum_my(N, M1, K1).
 
 prod_my(_, 0, 0).
-
-%prod
 prod_my(N, s(M), K):- prod_my(N, M, L), sum_my(L, N, K).
 
 natural(0).
@@ -63,11 +49,10 @@ natural(s(N)):- natural(N).
 nat(0).
 nat(N):- nat(N1), N is N1 + 1.
 
-% pair_bad(A, B):- nat(A), nat(B).
 
-% При подадени цели числа A и B
-% between(X, A, B) генерира в X
-% всички числа между A и B.
+% Given integers A and B
+% between(X, A, B) generates in X
+% all integers between A and B
 between_my(A, A, B):- A =< B.
 between_my(X, A, B):- A < B, A1 is A + 1, between_my(X, A1, B).
 
